@@ -56,6 +56,9 @@ dependencies {
 
     // CorDapp dependencies.
     cordapp project(":contracts")
+
+    implementation 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
 
 task integrationTest(type: Test, dependsOn: []) {

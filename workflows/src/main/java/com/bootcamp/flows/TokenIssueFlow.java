@@ -20,10 +20,12 @@ public class TokenIssueFlow {
     public static class TokenIssueFlowInitiator extends FlowLogic<SignedTransaction> {
         private final Party owner;
         private final int amount;
+        private final String currencycode;
 
-        public TokenIssueFlowInitiator(Party owner, int amount) {
+        public TokenIssueFlowInitiator(Party owner, int amount, String currencycode) {
             this.owner = owner;
             this.amount = amount;
+            this.currencycode = currencycode;
         }
 
         private final ProgressTracker progressTracker = new ProgressTracker();
@@ -46,13 +48,17 @@ public class TokenIssueFlow {
              *         TODO 1 - Create our TokenState to represent on-ledger tokens!
              * ===========================================================================*/
             // We create our new TokenState.
-            TokenState tokenState = null;
+            TokenState tokenState = new TokenState(issuer, owner, amount, currencycode);
 
             /* ============================================================================
              *      TODO 3 - Build our token issuance transaction to update the ledger!
              * ===========================================================================*/
             // We build our transaction.
-            TransactionBuilder transactionBuilder = null;
+            TransactionBuilder transactionBuilder = new TransactionBuilder(notary);
+            CommandData commandData = new TokenContract.Commands.Issue();
+
+            transactionBuilder.addCommand(commandData, issuer.getOwningKey(), owner.getOwningKey());
+            transactionBuilder.addOutputState(tokenState, TokenContract.ID);
 
             /* ============================================================================
              *          TODO 2 - Write our TokenContract to control token issuance!
